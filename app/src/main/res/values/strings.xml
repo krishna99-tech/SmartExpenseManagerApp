@@ -66,9 +66,9 @@
     <string name="insight_no_expenses_month">No expenses recorded this month yet.</string>
     <string name="section_recent">Recent Transactions</string>
     <string name="empty_recent">No recent transactions.</string>
-    <string name="insight_high_share_category">Warning: %s accounts for %.1f%% of your monthly spending.</string>
+    <string name="insight_high_share_category">Warning: %1$s accounts for %2$d%% of your monthly spending.</string>
     <string name="insight_reduce_travel">Tip: Your travel expenses are higher than usual. Consider carpooling.</string>
-    <string name="insight_spent_more_week">You spent %.2f more than last week.</string>
+    <string name="insight_spent_more_week">You spent significantly more on %s than last week.</string>
     <string name="insight_spending_near_income">Warning: Your spending is very close to your total income.</string>
     <string name="insight_no_expenses">Start adding expenses to see smart insights!</string>
 
@@ -106,6 +106,6 @@
 
     <!-- Notifications -->
     <string name="notification_recurring_title">Recurring Expense Reminder</string>
-    <string name="notification_recurring_summary">Multiple recurring transactions are due.</string>
+    <string name="notification_recurring_summary">You have %d recurring transactions due.</string>
     <string name="channel_recurring_name">Recurring Reminders</string>
 </resources>
