@@ -27,4 +27,85 @@
     <string name="error_pin_required">PIN is required to enable App Lock</string>
     <string name="error_pin_short">PIN must be at least 4 digits</string>
     <string name="error_pin_mismatch">PINs do not match</string>
+
+    <!-- Add Expense -->
+    <string name="add_title">Add Transaction</string>
+    <string name="scan_bill">Scan Bill</string>
+    <string name="scan_processing">Processing bill…</string>
+    <string name="scan_bill_hint">Snap a photo of your receipt to autofill details.</string>
+    <string name="field_title">Title</string>
+    <string name="field_amount">Amount</string>
+    <string name="field_category">Category</string>
+    <string name="field_type">Type</string>
+    <string name="type_expense">Expense</string>
+    <string name="type_income">Income</string>
+    <string name="field_recurring">Recurring</string>
+    <string name="recurring_off">One-time</string>
+    <string name="recurring_on">Recurring</string>
+    <string name="field_recurring_days">Repeat every (days)</string>
+    <string name="error_title">Please enter a title</string>
+    <string name="error_amount">Please enter a valid amount</string>
+    <string name="error_recurring_days">Please enter valid days</string>
+    <string name="action_save_transaction">Save Transaction</string>
+    <string name="scan_failed">Failed to scan bill</string>
+    <string name="snackbar_saved">Transaction saved</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_headline">My Finances</string>
+    <string name="label_balance">Current Balance</string>
+    <string name="label_income">Total Income</string>
+    <string name="label_expense">Total Expense</string>
+    <string name="label_monthly_budget">Monthly Budget Usage</string>
+    <string name="budget_usage">Spent %.2f of %.2f</string>
+    <string name="alert_budget_near">You have spent over 80%% of your budget.</string>
+    <string name="alert_budget_critical">Warning: You have spent over 95%% of your budget.</string>
+    <string name="alert_budget_exceeded">Budget Exceeded! You are spending more than your limit.</string>
+    <string name="section_smart_insights">Smart Insights</string>
+    <string name="card_spending_insight">Spending Insight</string>
+    <string name="insight_top_category">Your highest spending is on %s.</string>
+    <string name="insight_no_expenses_month">No expenses recorded this month yet.</string>
+    <string name="section_recent">Recent Transactions</string>
+    <string name="empty_recent">No recent transactions.</string>
+    <string name="insight_high_share_category">Warning: %s accounts for %.1f%% of your monthly spending.</string>
+    <string name="insight_reduce_travel">Tip: Your travel expenses are higher than usual. Consider carpooling.</string>
+    <string name="insight_spent_more_week">You spent %.2f more than last week.</string>
+    <string name="insight_spending_near_income">Warning: Your spending is very close to your total income.</string>
+    <string name="insight_no_expenses">Start adding expenses to see smart insights!</string>
+
+    <!-- Reports -->
+    <string name="reports_title">Financial Reports</string>
+    <string name="report_monthly_totals">Monthly Summary</string>
+    <string name="report_income_line">Total Income: %.2f</string>
+    <string name="report_expense_line">Total Expense: %.2f</string>
+    <string name="report_net_line">Net: %.2f</string>
+    <string name="report_pie_heading">Expense by Category</string>
+    <string name="report_no_expense_data">No expense data for this period.</string>
+    <string name="charts_advanced_title">Advanced Analytics</string>
+    <string name="chart_weekly_expenses">Weekly Expense Trend</string>
+    <string name="chart_monthly_expenses">Monthly Expense Trend</string>
+    <string name="charts_tab_weekly">Weekly</string>
+    <string name="charts_tab_monthly">Monthly</string>
+    <string name="chart_category_compare">Category Comparison</string>
+    <string name="chart_savings_buildup">Cumulative Savings</string>
+
+    <!-- Security & Lock -->
+    <string name="lock_title">App Locked</string>
+    <string name="lock_subtitle">Please enter your PIN to continue</string>
+    <string name="field_pin">PIN</string>
+    <string name="error_pin">Incorrect PIN</string>
+    <string name="action_unlock">Unlock</string>
+    <string name="biometric_title">Biometric Login</string>
+    <string name="biometric_subtitle">Log in using your biometric credentials</string>
+    <string name="action_biometric">Use Biometrics</string>
+    <string name="error_biometric">Biometric authentication failed</string>
+    <string name="action_use_pin">Use PIN</string>
+
+    <!-- Expense Item -->
+    <string name="label_recurring_short">Recurring</string>
+    <string name="cd_delete_transaction">Delete Transaction</string>
+
+    <!-- Notifications -->
+    <string name="notification_recurring_title">Recurring Expense Reminder</string>
+    <string name="notification_recurring_summary">Multiple recurring transactions are due.</string>
+    <string name="channel_recurring_name">Recurring Reminders</string>
 </resources>
