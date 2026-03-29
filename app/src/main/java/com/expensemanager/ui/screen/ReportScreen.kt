@@ -9,9 +9,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ChevronLeft
+import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material.icons.outlined.PieChart
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,8 +39,10 @@ import com.expensemanager.data.model.Expense
 import com.expensemanager.ui.components.CategoryBarChart
 import com.expensemanager.ui.components.CategoryPieChart
 import com.expensemanager.ui.components.TrendLineChart
+import com.expensemanager.ui.theme.DsSpacing
 import com.expensemanager.utils.ChartDataBuilder
 import com.expensemanager.utils.Constants
+import com.expensemanager.utils.Formatters
 import com.expensemanager.viewmodel.ExpenseViewModel
 import java.util.Calendar
 import java.util.Locale
@@ -76,14 +84,14 @@ fun ReportScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(contentPadding)
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = DsSpacing.lg)
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(DsSpacing.md),
     ) {
         Text(
             text = stringResource(R.string.reports_title),
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = DsSpacing.md),
         )
 
         MonthSelector(
@@ -116,25 +124,28 @@ fun ReportScreen(
             Column(Modifier.padding(16.dp)) {
                 Text(stringResource(R.string.report_monthly_totals), style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = stringResource(R.string.report_income_line, monthlyIncome),
-                    modifier = Modifier.padding(top = 8.dp),
+                    text = "${stringResource(R.string.label_income)}: ${Formatters.currency(monthlyIncome)}",
+                    modifier = Modifier.padding(top = DsSpacing.xs),
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Medium,
                 )
                 Text(
-                    text = stringResource(R.string.report_expense_line, monthlyExpenseTotal),
+                    text = "${stringResource(R.string.label_expense)}: ${Formatters.currency(monthlyExpenseTotal)}",
                     color = MaterialTheme.colorScheme.error,
                     fontWeight = FontWeight.Medium,
                 )
                 Text(
-                    text = stringResource(R.string.report_net_line, monthlyIncome - monthlyExpenseTotal),
+                    text = "Net: ${Formatters.currency(monthlyIncome - monthlyExpenseTotal)}",
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = DsSpacing.xs),
                 )
             }
         }
 
-        Text(text = stringResource(R.string.report_pie_heading), style = MaterialTheme.typography.titleMedium)
+        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+            Icon(Icons.Outlined.PieChart, contentDescription = null, modifier = Modifier.padding(end = DsSpacing.xs))
+            Text(text = stringResource(R.string.report_pie_heading), style = MaterialTheme.typography.titleMedium)
+        }
 
         if (expenseByCategory.isEmpty()) {
             Text(
@@ -162,7 +173,7 @@ fun ReportScreen(
         Text(
             text = stringResource(R.string.charts_advanced_title),
             style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(top = DsSpacing.xs),
         )
 
         Text(stringResource(R.string.chart_weekly_expenses), style = MaterialTheme.typography.titleSmall)
@@ -193,7 +204,7 @@ fun ReportScreen(
         Text(
             text = stringResource(R.string.chart_category_compare),
             style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(top = DsSpacing.xs),
         )
         if (expenseByCategory.isEmpty()) {
             Text(
@@ -211,7 +222,7 @@ fun ReportScreen(
         Text(
             text = stringResource(R.string.chart_savings_buildup),
             style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(top = DsSpacing.xs),
         )
         TrendLineChart(
             points = savingsSeries,
@@ -231,14 +242,19 @@ private fun MonthSelector(year: Int, month: Int, onPrev: () -> Unit, onNext: () 
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
     ) {
-        FilterChip(selected = false, onClick = onPrev, label = { Text("←") })
+        IconButton(onClick = onPrev) {
+            Icon(Icons.Outlined.ChevronLeft, contentDescription = null)
+        }
         Text(
             text = "$label $year",
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(vertical = 8.dp),
+            modifier = Modifier.padding(vertical = DsSpacing.xs),
         )
-        FilterChip(selected = false, onClick = onNext, label = { Text("→") })
+        IconButton(onClick = onNext) {
+            Icon(Icons.Outlined.ChevronRight, contentDescription = null)
+        }
     }
 }
 
@@ -250,7 +266,7 @@ private fun RowBetween(category: String, amount: Double) {
     ) {
         Text(text = category, style = MaterialTheme.typography.bodyMedium)
         Text(
-            text = String.format(Locale.getDefault(), "%.2f", amount),
+            text = Formatters.currency(amount),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
         )

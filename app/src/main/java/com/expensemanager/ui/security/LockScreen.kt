@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Fingerprint
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.expensemanager.R
+import com.expensemanager.ui.theme.DsRadius
+import com.expensemanager.ui.theme.DsSpacing
 
 @Composable
 fun LockScreen(
@@ -93,54 +98,67 @@ fun LockScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(DsSpacing.xl),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            text = stringResource(R.string.lock_title),
-            style = MaterialTheme.typography.headlineMedium,
-        )
-        Text(
-            text = stringResource(R.string.lock_subtitle),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = 8.dp, bottom = 24.dp),
-        )
-
-        OutlinedTextField(
-            value = pin,
-            onValueChange = { if (it.length <= 8 && it.all { d -> d.isDigit() }) pin = it },
-            label = { Text(stringResource(R.string.field_pin)) },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-            visualTransformation = PasswordVisualTransformation(),
-            isError = error != null,
-            supportingText = { error?.let { Text(it) } },
-        )
-
-        Spacer(Modifier.height(16.dp))
-
-        Button(
-            onClick = {
-                if (onVerifyPin(pin)) {
-                    onUnlocked()
-                } else {
-                    error = context.getString(R.string.error_pin)
-                    pin = ""
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
+        Card(
+            shape = DsRadius.lg,
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
+            ),
         ) {
-            Text(stringResource(R.string.action_unlock))
+            Column(modifier = Modifier.padding(DsSpacing.lg)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Outlined.Lock, contentDescription = null, modifier = Modifier.padding(end = DsSpacing.xs))
+                    Text(
+                        text = stringResource(R.string.lock_title),
+                        style = MaterialTheme.typography.headlineMedium,
+                    )
+                }
+                Text(
+                    text = stringResource(R.string.lock_subtitle),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = DsSpacing.xs, bottom = DsSpacing.lg),
+                )
+
+                OutlinedTextField(
+                    value = pin,
+                    onValueChange = { if (it.length <= 8 && it.all { d -> d.isDigit() }) pin = it },
+                    label = { Text(stringResource(R.string.field_pin)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                    visualTransformation = PasswordVisualTransformation(),
+                    isError = error != null,
+                    supportingText = { error?.let { Text(it) } },
+                )
+
+                Spacer(Modifier.height(DsSpacing.md))
+
+                Button(
+                    onClick = {
+                        if (onVerifyPin(pin)) {
+                            onUnlocked()
+                        } else {
+                            error = context.getString(R.string.error_pin)
+                            pin = ""
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.action_unlock))
+                }
+            }
         }
 
         val canAuth = BiometricManager.from(context).canAuthenticate(
             BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.BIOMETRIC_WEAK,
         )
         if (biometricEnabled && canAuth == BiometricManager.BIOMETRIC_SUCCESS) {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(DsSpacing.sm))
             OutlinedButton(
                 onClick = {
                     val prompt = BiometricPrompt(
@@ -173,7 +191,7 @@ fun LockScreen(
                     Icon(Icons.Outlined.Fingerprint, contentDescription = null)
                     Text(
                         text = stringResource(R.string.action_biometric),
-                        modifier = Modifier.padding(start = 8.dp),
+                        modifier = Modifier.padding(start = DsSpacing.xs),
                     )
                 }
             }

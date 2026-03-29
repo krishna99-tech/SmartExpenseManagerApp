@@ -18,6 +18,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+
 @Composable
 fun TrendLineChart(
     points: List<LabeledFloat>,
@@ -37,12 +38,17 @@ fun TrendLineChart(
                 setScaleEnabled(false)
                 legend.isEnabled = false
                 axisRight.isEnabled = false
+                setNoDataText("No data yet")
+                setNoDataTextColor(android.graphics.Color.GRAY)
+                setExtraOffsets(4f, 8f, 12f, 4f)
                 if (!allowNegativeY) {
                     axisLeft.axisMinimum = 0f
                 }
                 xAxis.position = XAxis.XAxisPosition.BOTTOM
                 xAxis.granularity = 1f
                 xAxis.setAvoidFirstLastClipping(true)
+                xAxis.setDrawGridLines(false)
+                axisLeft.setDrawGridLines(true)
             }
         },
         update = { chart ->
@@ -59,6 +65,9 @@ fun TrendLineChart(
                 lineWidth = 2.2f
                 setDrawValues(false)
                 mode = LineDataSet.Mode.CUBIC_BEZIER
+                setCircleColor(lineColorArgb)
+                setDrawFilled(true)
+                fillColor = materialColorWithAlpha(lineColorArgb, 0.2f)
             }
             chart.xAxis.valueFormatter = IndexAxisValueFormatter(points.map { it.label })
             chart.xAxis.labelCount = minOf(points.size, 6)
@@ -90,9 +99,13 @@ fun CategoryBarChart(
                 setScaleEnabled(false)
                 axisRight.isEnabled = false
                 axisLeft.axisMinimum = 0f
+                setNoDataText("No data yet")
+                setNoDataTextColor(android.graphics.Color.GRAY)
+                setExtraOffsets(4f, 8f, 12f, 4f)
                 xAxis.position = XAxis.XAxisPosition.BOTTOM
                 xAxis.granularity = 1f
                 xAxis.setLabelRotationAngle(-18f)
+                xAxis.setDrawGridLines(false)
             }
         },
         update = { chart ->

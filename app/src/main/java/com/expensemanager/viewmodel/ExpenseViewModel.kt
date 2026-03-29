@@ -145,6 +145,11 @@ class ExpenseViewModel(
         _billScanSuggestion.value = null
     }
 
+    fun applyLiveRecognizedText(text: String) {
+        if (text.isBlank()) return
+        _billScanSuggestion.value = BillScanParser.parse(text)
+    }
+
     fun saveTransaction(
         title: String,
         amount: Double,

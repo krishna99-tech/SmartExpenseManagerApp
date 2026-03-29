@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccountBalanceWallet
+import androidx.compose.material.icons.outlined.ArrowDownward
+import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
@@ -19,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -26,7 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.expensemanager.R
 import com.expensemanager.ui.components.ExpenseItem
+import com.expensemanager.ui.theme.DsSpacing
 import com.expensemanager.utils.Constants
+import com.expensemanager.utils.Formatters
 import com.expensemanager.viewmodel.BudgetWarningLevel
 import com.expensemanager.viewmodel.ExpenseViewModel
 import java.util.Calendar
@@ -58,8 +65,8 @@ fun DashboardScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(contentPadding),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(DsSpacing.sm),
+        contentPadding = PaddingValues(horizontal = DsSpacing.lg, vertical = DsSpacing.md),
     ) {
         item {
             Text(
@@ -80,19 +87,21 @@ fun DashboardScreen(
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(DsSpacing.sm),
             ) {
                 SummaryCard(
                     modifier = Modifier.weight(1f),
                     title = stringResource(R.string.label_income),
                     value = summary.totalIncome,
                     positive = true,
+                    icon = Icons.Outlined.ArrowUpward,
                 )
                 SummaryCard(
                     modifier = Modifier.weight(1f),
                     title = stringResource(R.string.label_expense),
                     value = summary.totalExpense,
                     positive = false,
+                    icon = Icons.Outlined.ArrowDownward,
                 )
             }
         }
@@ -119,13 +128,13 @@ fun DashboardScreen(
                                     cap,
                                 ),
                                 style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(top = 4.dp),
+                                modifier = Modifier.padding(top = DsSpacing.xxs),
                             )
                             LinearProgressIndicator(
                                 progress = { progress },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = 10.dp),
+                                    .padding(top = DsSpacing.xs),
                             )
                         }
                     }
@@ -216,7 +225,7 @@ fun DashboardScreen(
             Text(
                 text = stringResource(R.string.section_recent),
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier.padding(top = DsSpacing.xs),
             )
         }
 
@@ -254,13 +263,15 @@ private fun SummaryRow(title: String, value: Double, emphasize: Boolean) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(DsSpacing.lg),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = title, style = MaterialTheme.typography.titleMedium)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconLabel(Icons.Outlined.AccountBalanceWallet, title)
+            }
             Text(
-                text = String.format(Locale.getDefault(), "%.2f", value),
+                text = Formatters.currency(value),
                 style = if (emphasize) MaterialTheme.typography.displaySmall else MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
             )
@@ -269,7 +280,13 @@ private fun SummaryRow(title: String, value: Double, emphasize: Boolean) {
 }
 
 @Composable
-private fun SummaryCard(title: String, value: Double, positive: Boolean, modifier: Modifier = Modifier) {
+private fun SummaryCard(
+    title: String,
+    value: Double,
+    positive: Boolean,
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+) {
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
@@ -280,15 +297,27 @@ private fun SummaryCard(title: String, value: Double, positive: Boolean, modifie
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text(text = title, style = MaterialTheme.typography.labelLarge)
+            IconLabel(icon, title)
             Text(
-                text = String.format(Locale.getDefault(), "%.2f", value),
+                text = Formatters.currency(value),
                 style = MaterialTheme.typography.titleLarge,
                 color = if (positive) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
                 fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(top = 4.dp),
+                modifier = Modifier.padding(top = DsSpacing.xxs),
             )
         }
+    }
+}
+
+@Composable
+private fun IconLabel(icon: ImageVector, text: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        androidx.compose.material3.Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.padding(end = DsSpacing.xs),
+        )
+        Text(text = text, style = MaterialTheme.typography.labelLarge)
     }
 }
 

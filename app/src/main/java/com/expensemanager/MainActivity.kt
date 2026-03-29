@@ -64,6 +64,7 @@ import com.expensemanager.ui.screen.DashboardScreen
 import com.expensemanager.ui.screen.ReportScreen
 import com.expensemanager.ui.security.LockScreen
 import com.expensemanager.ui.theme.SmartExpenseTheme
+import com.expensemanager.ui.theme.DsSpacing
 import com.expensemanager.utils.ThemeMode
 import com.expensemanager.viewmodel.ExpenseViewModel
 import kotlinx.coroutines.launch
@@ -309,15 +310,15 @@ private fun SettingsDialog(
                     text = stringResource(R.string.settings_budget_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(vertical = 8.dp),
+                    modifier = Modifier.padding(vertical = DsSpacing.xs),
                 )
 
                 Text(
                     text = stringResource(R.string.settings_theme),
                     style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.padding(bottom = 4.dp),
+                    modifier = Modifier.padding(bottom = DsSpacing.xxs),
                 )
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(DsSpacing.xs)) {
                     FilterChip(
                         selected = themePick == ThemeMode.SYSTEM,
                         onClick = { themePick = ThemeMode.SYSTEM },
@@ -338,7 +339,7 @@ private fun SettingsDialog(
                     label = stringResource(R.string.settings_dynamic_color),
                     checked = dynamicPick,
                     onCheckedChange = { dynamicPick = it },
-                    modifier = Modifier.padding(top = 12.dp),
+                    modifier = Modifier.padding(top = DsSpacing.sm),
                 )
 
                 RowSwitch(
@@ -364,7 +365,7 @@ private fun SettingsDialog(
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 8.dp),
+                            .padding(top = DsSpacing.xs),
                     )
                     OutlinedTextField(
                         value = confirmPin,
@@ -382,7 +383,7 @@ private fun SettingsDialog(
                     label = stringResource(R.string.settings_biometric),
                     checked = biometric,
                     onCheckedChange = { biometric = it; error = null },
-                    modifier = Modifier.padding(top = 12.dp),
+                    modifier = Modifier.padding(top = DsSpacing.sm),
                 )
 
                 error?.let {
@@ -390,7 +391,7 @@ private fun SettingsDialog(
                         text = it,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = DsSpacing.xs),
                     )
                 }
 
@@ -398,7 +399,7 @@ private fun SettingsDialog(
                     onClick = onExport,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp),
+                        .padding(top = DsSpacing.md),
                 ) {
                     Text(stringResource(R.string.action_export_csv))
                 }

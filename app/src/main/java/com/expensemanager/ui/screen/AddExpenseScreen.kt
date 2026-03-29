@@ -7,10 +7,11 @@ import android.os.Build
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -28,10 +29,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -50,9 +53,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.expensemanager.R
+import com.expensemanager.ui.theme.DsAnim
+import com.expensemanager.ui.theme.DsSpacing
+import com.expensemanager.ui.components.LiveBillScanner
 import com.expensemanager.utils.Constants
 import com.expensemanager.viewmodel.ExpenseViewModel
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CameraAlt
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Collections
+import androidx.compose.material.icons.outlined.DocumentScanner
 import androidx.compose.material.icons.outlined.Refresh
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -76,6 +86,7 @@ fun AddExpenseScreen(
     var error by rememberSaveable { mutableStateOf<String?>(null) }
     var entryDateMillis by remember { mutableLongStateOf(System.currentTimeMillis()) }
     var decoding by remember { mutableStateOf(false) }
+    var showLiveScanner by remember { mutableStateOf(false) }
 
     val scanSuggestion by viewModel.billScanSuggestion.collectAsStateWithLifecycle()
     LaunchedEffect(scanSuggestion) {
@@ -112,14 +123,17 @@ fun AddExpenseScreen(
 
     val pickImage = rememberLauncherForActivityResult(PickVisualMedia()) { uri: Uri? ->
         if (uri == null) return@rememberLauncherForActivityResult
-        scope.launch {
-            decoding = true
-            try {
-                val bitmap = withContext(Dispatchers.IO) { decodeBitmap(context, uri) }
-                viewModel.scanBill(bitmap)
-            } finally {
-                decoding = false
-            }
+        processScannedBitmap(scope, viewModel, { decoding = it }) {
+            decodeBitmap(context, uri)
+        }
+    }
+
+    val cameraCapture = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicturePreview(),
+    ) { bitmap: Bitmap? ->
+        if (bitmap == null) return@rememberLauncherForActivityResult
+        processScannedBitmap(scope, viewModel, { decoding = it }) {
+            bitmap
         }
     }
 
@@ -131,27 +145,58 @@ fun AddExpenseScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(contentPadding)
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = DsSpacing.lg)
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(DsSpacing.md),
     ) {
         Text(
             text = stringResource(R.string.add_title),
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(top = 16.dp, bottom = 4.dp),
+            modifier = Modifier.padding(top = DsSpacing.md, bottom = DsSpacing.xxs),
         )
 
+        Row(horizontalArrangement = Arrangement.spacedBy(DsSpacing.xs), modifier = Modifier.fillMaxWidth()) {
+            OutlinedButton(
+                onClick = { cameraCapture.launch(null) },
+                enabled = !decoding,
+                modifier = Modifier.weight(1f),
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.CameraAlt,
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = DsSpacing.xs),
+                )
+                Text(stringResource(R.string.scan_bill_camera))
+            }
+            OutlinedButton(
+                onClick = {
+                    pickImage.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+                },
+                enabled = !decoding,
+                modifier = Modifier.weight(1f),
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Collections,
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = DsSpacing.xs),
+                )
+                Text(
+                    if (decoding) stringResource(R.string.scan_processing)
+                    else stringResource(R.string.scan_bill_gallery),
+                )
+            }
+        }
         OutlinedButton(
-            onClick = {
-                pickImage.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
-            },
+            onClick = { showLiveScanner = true },
             enabled = !decoding,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(
-                if (decoding) stringResource(R.string.scan_processing)
-                else stringResource(R.string.scan_bill),
+            Icon(
+                imageVector = Icons.Outlined.DocumentScanner,
+                contentDescription = null,
+                modifier = Modifier.padding(end = DsSpacing.xs),
             )
+            Text(stringResource(R.string.live_scan_button))
         }
         Text(
             text = stringResource(R.string.scan_bill_hint),
@@ -221,6 +266,20 @@ fun AddExpenseScreen(
             Text(text = it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
         }
 
+        OutlinedButton(
+            onClick = {
+                title = ""
+                amountText = ""
+                recurring = false
+                recurringDaysText = "7"
+                entryDateMillis = System.currentTimeMillis()
+                error = null
+            },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(stringResource(R.string.action_clear_fields))
+        }
+
         Button(
             onClick = {
                 val parsed = amountText.toDoubleOrNull()
@@ -250,10 +309,33 @@ fun AddExpenseScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp),
+                .padding(vertical = DsSpacing.md),
         ) {
+            Icon(
+                imageVector = Icons.Outlined.CheckCircle,
+                contentDescription = null,
+                modifier = Modifier.padding(end = DsSpacing.xs),
+            )
             Text(stringResource(R.string.action_save_transaction))
         }
+    }
+
+    if (showLiveScanner) {
+        AlertDialog(
+            onDismissRequest = { showLiveScanner = false },
+            text = {
+                LiveBillScanner(
+                    onClose = { showLiveScanner = false },
+                    onTextDetected = { viewModel.applyLiveRecognizedText(it) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { showLiveScanner = false }) {
+                    Text(stringResource(R.string.action_close))
+                }
+            },
+        )
     }
 }
 
@@ -276,6 +358,25 @@ private fun decodeBitmap(context: android.content.Context, uri: Uri): Bitmap {
         (h * scale).toInt().coerceAtLeast(1),
         true,
     )
+}
+
+private fun processScannedBitmap(
+    scope: kotlinx.coroutines.CoroutineScope,
+    viewModel: ExpenseViewModel,
+    setLoading: (Boolean) -> Unit,
+    bitmapProvider: suspend () -> Bitmap,
+) {
+    scope.launch {
+        setLoading(true)
+        try {
+            val bitmap = withContext(Dispatchers.IO) { bitmapProvider() }
+            viewModel.scanBill(bitmap)
+        } catch (_: Exception) {
+            // scanBill already surfaces failures via ViewModel messages.
+        } finally {
+            setLoading(false)
+        }
+    }
 }
 
 @Composable
@@ -351,7 +452,7 @@ private fun BillScanLoading() {
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 900, easing = LinearEasing),
+            animation = tween(durationMillis = DsAnim.slow, easing = LinearEasing),
             repeatMode = RepeatMode.Restart,
         ),
         label = "rotation",
@@ -360,17 +461,17 @@ private fun BillScanLoading() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp),
+            .padding(vertical = DsSpacing.xs),
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
-        CircularProgressIndicator(modifier = Modifier.padding(end = 10.dp))
+        CircularProgressIndicator(modifier = Modifier.padding(end = DsSpacing.sm))
         Icon(
             imageVector = Icons.Outlined.Refresh,
             contentDescription = null,
             modifier = Modifier
                 .graphicsLayer { rotationZ = rotation }
-                .padding(end = 10.dp),
+                .padding(end = DsSpacing.sm),
         )
         Text(
             text = stringResource(R.string.scan_processing),
