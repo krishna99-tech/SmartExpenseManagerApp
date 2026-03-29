@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Smart Expense Manager</string>
+    <string name="app_title_bar">Smart Expense</string>
+    <string name="export_share_title">Export Expenses</string>
+    <string name="cd_settings">Settings</string>
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_add">Add</string>
+    <string name="nav_reports">Reports</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_monthly_budget">Monthly Budget</string>
+    <string name="settings_budget_hint">Set a monthly budget to track your spending.</string>
+    <string name="settings_theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="settings_dynamic_color">Dynamic Color</string>
+    <string name="settings_app_lock">App Lock</string>
+    <string name="settings_new_pin">New PIN</string>
+    <string name="settings_new_pin_optional">New PIN (Optional)</string>
+    <string name="settings_confirm_pin">Confirm PIN</string>
+    <string name="settings_biometric">Biometric Authentication</string>
+    <string name="action_export_csv">Export to CSV</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="error_budget">Invalid budget amount</string>
+    <string name="error_pin_required">PIN is required to enable App Lock</string>
+    <string name="error_pin_short">PIN must be at least 4 digits</string>
+    <string name="error_pin_mismatch">PINs do not match</string>
+</resources>
